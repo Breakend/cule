@@ -82,7 +82,7 @@ def env_initialize(args, device):
 
     if args.use_openai_test_env:
         test_env = create_vectorize_atari_env(args.env_name, args.seed, args.evaluation_episodes,
-                                              episode_life=False, clip_rewards=False)
+                                              episode_life=False, clip_rewards=False, filename=os.path.join(os.path.dirname(args.output_filename), 'monitor.csv'))
         test_env.reset()
     else:
         test_env = AtariEnv(args.env_name, args.evaluation_episodes, color_mode='gray', repeat_prob=0.0,

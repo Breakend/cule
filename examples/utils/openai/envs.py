@@ -22,12 +22,12 @@ def create_atari_env(env_id, seed=0, rank=0, episode_life=False, clip_rewards=Fa
         return env
     return _thunk
 
-def create_vectorize_atari_env(env_id, seed, num_envs, episode_life=False, clip_rewards=False, deepmind=True, max_frames=18000):
-    return SubprocVecEnv([create_atari_env(env_id,
+def create_vectorize_atari_env(env_id, seed, num_envs, episode_life=False, clip_rewards=False, deepmind=True, max_frames=18000, filename=None):
+    return (SubprocVecEnv([create_atari_env(env_id,
                                            seed=seed,
                                            rank=proc_id,
                                            episode_life=episode_life,
                                            clip_rewards=clip_rewards,
                                            deepmind=deepmind,
-                                           max_frames=max_frames) for proc_id in range(num_envs)])
+                                           max_frames=max_frames) for proc_id in range(num_envs)]))
 

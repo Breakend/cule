@@ -27,8 +27,8 @@ def add_global_parser_options(parser):
     parser.add_argument('--env-name', type=str, default='PongNoFrameskip-v4', help='Atari game name')
     parser.add_argument('--eps', type=float, default=1e-5, help='RMSprop optimizer epsilon (default: 1e-5)')
     parser.add_argument('--episodic-life', action='store_true', default=False, help='use end of life as end of episode')
-    parser.add_argument('--evaluation-interval', type=int, default=int(1e6), help='Number of frames between evaluations (default: 1,000,000)')
-    parser.add_argument('--evaluation-episodes', type=int, default=10, help='Number of evaluation episodes to average over (default: 10)')
+    parser.add_argument('--evaluation-interval', type=int, default=int(250000), help='Number of frames between evaluations (default: 1,000,000)')
+    parser.add_argument('--evaluation-episodes', type=int, default=25, help='Number of evaluation episodes to average over (default: 10)')
     parser.add_argument('--gamma', type=float, default=0.99, help='discount factor for rewards (default: 0.99)')
     parser.add_argument('--gpu', type=int, default=None, help='GPU ID (default: None)')
     parser.add_argument('--local_rank', type=int, default=0)
@@ -156,5 +156,11 @@ def main(add_extra_parser_options, worker):
 
     if args.local_rank == 0:
         pprint(vars(args))
+
+    from experiment_impact_tracker.compute_tracker import ImpactTracker, get_flop_count_tensorflow
+
+    tracker = ImpactTracker(args.log_dir)
+
+    tracker.launch_impact_monitor()
 
     maybe_restart(args, worker)

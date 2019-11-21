@@ -97,7 +97,7 @@ def worker(gpu, ngpus_per_node, args):
     for update in iterator:
 
         T = args.world_size * update * num_frames_per_iter
-        if (args.rank == 0) and (T >= evaluation_offset):
+        if (args.rank == 0) and (T >= evaluation_offset or update == total_steps - 1):
             evaluation_offset += args.evaluation_interval
 
             if double_testing == False:
@@ -110,14 +110,6 @@ def worker(gpu, ngpus_per_node, args):
                 print('[training time: {}] {}'.format(format_time(total_time), ' --- '.join([length_data, reward_data])))
 
             else:
-
-                args.use_openai_test_env = False
-                eval_lengths, eval_rewards = test(args, model, test_env)
-                lmean, lmedian, lmin, lmax, lstd = gen_data(eval_lengths)
-                rmean, rmedian, rmin, rmax, rstd = gen_data(eval_rewards)
-                length_data = '(length) min/max/mean/median: {lmin:4.1f}/{lmax:4.1f}/{lmean:4.1f}/{lmedian:4.1f}'.format(lmin=lmin, lmax=lmax, lmean=lmean, lmedian=lmedian)
-                reward_data = '(reward) min/max/mean/median: {rmin:4.1f}/{rmax:4.1f}/{rmean:4.1f}/{rmedian:4.1f}'.format(rmin=rmin, rmax=rmax, rmean=rmean, rmedian=rmedian)
-                print('[CuLE CPU] [training time: {}] {}'.format(format_time(total_time), ' --- '.join([length_data, reward_data])))
 
                 args.use_openai_test_env = True
                 eval_lengths, eval_rewards = test(args, model, test_env_oai)
